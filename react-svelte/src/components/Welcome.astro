@@ -3,7 +3,24 @@ import astroLogo from '../assets/astro.svg';
 import background from '../assets/background.svg';
 import MyReactComponent from '../components/react/MyReactComponent.jsx';
 import MySvelteComponent from '../components/svelte/MySvelteComponent.svelte';
+// SSG
+const responseSSG = await fetch('https://jsonplaceholder.typicode.com/posts/1');
+const post = await responseSSG.json();
+
+
+//SSR
+
+const responseSSR = await fetch('https://randomuser.me/api/');
+const dataSSR = await responseSSR.json();
+const user = dataSSR.results[0];
+
+// ISR
+Astro.response.headers.set("cache-control", "max-age=0, s-maxage=60"); // 60s = 1 min
+
+const res = await fetch('https://worldtimeapi.org/api/timezone/America/Fortaleza');
+const data = await res.json();
 ---
+
 
 <div id="container">
 	<img id="background" src={background.src} alt="" fetchpriority="high" />
@@ -15,7 +32,18 @@ import MySvelteComponent from '../components/svelte/MySvelteComponent.svelte';
 			<div>
 				<MyReactComponent client:load/>
 				<MySvelteComponent client:load/>
+				<h1>{post.title}</h1>
+				<p>{post.body}</p>
+
+				<h1>Current time in Fortaleza:</h1>
+				<p>{data.datetime}</p>
+
+				<h1>{user.name.first} {user.name.last}</h1>
+    			<img src={user.picture.medium} />
 			</div>
+
+
+		
 			<h1>
 				To get started, open the <code><pre>src/pages</pre></code> directory in your project.
 			</h1>
